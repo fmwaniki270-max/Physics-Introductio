@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Branches of Physics – Grade 10 CBC</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;1,300&display=swap');
+
+  :root {
+    --bg: #020818;
+    --deep: #050f2a;
+    --panel: rgba(8,20,60,0.85);
+    --glow-blue: #00d4ff;
+    --glow-green: #00ff88;
+    --glow-purple: #b060ff;
+    --glow-orange: #ff8c00;
+    --glow-pink: #ff2d78;
+    --glow-yellow: #ffe033;
+    --glow-teal: #00ffd0;
+    --text: #e8f4ff;
+    --dim: rgba(180,210,255,0.5);
+    --card-w: 260px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Exo 2', sans-serif;
+    color: var(--text);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ===== STARFIELD ===== */
+  #stars { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .star {
+    position:absolute; border-radius:50%;
+    background:white; animation: twinkle linear infinite;
+  }
+  @keyframes twinkle {
+    0%,100%{opacity:.1} 50%{opacity:1}
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    position: relative; z-index:2;
+    text-align:center;
+    padding: 60px 20px 30px;
+  }
+  .hero-label {
+    font-family: 'Orbitron', monospace;
+    font-size: .7rem; letter-spacing: .3em;
+    color: var(--glow-blue); text-transform:uppercase;
+    margin-bottom:12px;
+  }
+  h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    font-weight:900; line-height:1.1;
+    background: linear-gradient(135deg, var(--glow-blue), var(--glow-purple), var(--glow-teal));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(0,212,255,.4));
+  }
+  .subtitle {
+    margin-top: 12px;
+    font-size: 1rem; color: var(--dim); font-style: italic;
+    letter-spacing:.05em;
+  }
+
+  /* ===== SCENE CONTAINER ===== */
+  #scene {
+    position: relative; z-index:2;
+    width:100%; max-width:1400px;
+    margin: 0 auto;
+    padding: 20px 20px 40px;
+  }
+
+  /* ===== VR VIEWPORT ===== */
+  #vr-viewport {
+    position: relative;
+    width:100%; height: 520px;
+    border: 1px solid rgba(0,212,255,.2);
+    border-radius: 20px;
+    overflow:hidden;
+    background: radial-gradient(ellipse at 50% 40%, #081840 0%, #020818 70%);
+    box-shadow: 0 0 60px rgba(0,80,200,.3), inset 0 0 80px rgba(0,0,0,.6);
+    perspective: 1200px;
+    cursor: grab;
+  }
+  #vr-viewport:active { cursor:grabbing; }
+
+  /* HUD corners */
+  .hud-corner {
+    position:absolute; width:30px; height:30px; z-index:10;
+    border-color: rgba(0,212,255,.5);
+    border-style:solid;
+  }
+  .hud-corner.tl { top:12px;left:12px; border-width:2px 0 0 2px; }
+  .hud-corner.tr { top:12px;right:12px; border-width:2px 2px 0 0; }
+  .hud-corner.bl { bottom:12px;left:12px; border-width:0 0 2px 2px; }
+  .hud-corner.br { bottom:12px;right:12px; border-width:0 2px 2px 0; }
+
+  .hud-label {
+    position:absolute; top:16px; left:50%; transform:translateX(-50%);
+    font-family:'Orbitron',monospace; font-size:.6rem;
+    color: rgba(0,212,255,.6); letter-spacing:.2em; z-index:10;
+  }
+
+  /* ===== CENTRAL ORBS ===== */
+  #orb-ring {
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    transform-style: preserve-3d;
+    transition: transform .05s linear;
+  }
+
+  /* Physics core sphere */
+  .core-sphere {
+    position:absolute;
+    width:110px; height:110px; border-radius:50%;
+    background: radial-gradient(circle at 35% 35%, #1a6fff, #020830);
+    box-shadow:
+      0 0 30px rgba(0,100,255,.8),
+      0 0 80px rgba(0,100,255,.4),
+      inset 0 0 20px rgba(255,255,255,.1);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Orbitron',monospace;
+    font-size:.7rem; text-align:center; line-height:1.4;
+    color:#fff; z-index:5;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100%{ box-shadow: 0 0 30px rgba(0,100,255,.8), 0 0 80px rgba(0,100,255,.4); }
+    50%    { box-shadow: 0 0 50px rgba(0,160,255,1),  0 0 120px rgba(0,100,255,.6); }
+  }
+
+  /* Orbit rings (decorative) */
+  .orbit-ring {
+    position:absolute; border-radius:50%;
+    border: 1px solid rgba(0,180,255,.15);
+    animation: spin-ring linear infinite;
+  }
+  @keyframes spin-ring { from{transform:rotateX(75deg) rotate(0deg)} to{transform:rotateX(75deg) rotate(360deg)} }
+
+  /* ===== BRANCH CARDS ===== */
+  .branch {
+    position: absolute;
+    width: var(--card-w);
+    cursor: pointer;
+    transform-origin: center center;
+    transition: transform .3s ease, filter .3s ease;
+    z-index:4;
+  }
+  .branch:hover .branch-card {
+    transform: scale(1.06) translateY(-4px);
+    filter: brightness(1.3);
+  }
+
+  .branch-card {
+    border-radius:16px;
+    padding: 18px 16px 14px;
+    position:relative; overflow:hidden;
+    border: 1px solid rgba(255,255,255,.1);
+    background: var(--panel);
+    backdrop-filter: blur(12px);
+    transition: transform .3s ease, filter .3s ease;
+    box-shadow: 0 8px 30px rgba(0,0,0,.5);
+  }
+
+  /* connector line */
+  .branch-line {
+    position:absolute; height:2px;
+    top:50%; transform-origin: left center;
+    pointer-events:none; z-index:3;
+    opacity:.5;
+    animation: linePulse 2s ease-in-out infinite;
+  }
+  @keyframes linePulse { 0%,100%{opacity:.3} 50%{opacity:.8} }
+
+  .branch-icon {
+    font-size:2.4rem; margin-bottom:8px; display:block;
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+  .branch-name {
+    font-family:'Orbitron',monospace;
+    font-size:.75rem; font-weight:700;
+    letter-spacing:.08em; margin-bottom:4px;
+    text-transform:uppercase;
+  }
+  .branch-tagline {
+    font-size:.72rem; color:var(--dim); font-style:italic;
+    line-height:1.3; margin-bottom:8px;
+  }
+  .branch-examples {
+    display:flex; flex-wrap:wrap; gap:4px; margin-bottom:10px;
+  }
+  .ex-tag {
+    font-size:.58rem; padding:2px 7px; border-radius:20px;
+    border:1px solid rgba(255,255,255,.15);
+    background: rgba(255,255,255,.06);
+    font-family:'Orbitron',monospace; letter-spacing:.05em;
+  }
+  .branch-btn {
+    display:inline-block;
+    font-family:'Orbitron',monospace;
+    font-size:.58rem; letter-spacing:.1em;
+    padding:5px 14px; border-radius:20px;
+    border: 1px solid currentColor; cursor:pointer;
+    background:transparent; color:inherit;
+    transition: background .2s, color .2s;
+  }
+  .branch-btn:hover { background:rgba(255,255,255,.15); }
+
+  /* glow tint per branch */
+  .branch-card::before {
+    content:''; position:absolute; inset:0; border-radius:16px;
+    background: radial-gradient(circle at 20% 20%, var(--b-color, transparent) 0%, transparent 70%);
+    opacity:.15; pointer-events:none;
+  }
+
+  /* ===== MODAL OVERLAY ===== */
+  #modal {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.85); backdrop-filter:blur(12px);
+    z-index:100; align-items:center; justify-content:center;
+  }
+  #modal.open { display:flex; }
+  #modal-box {
+    background: linear-gradient(135deg, #060e2a 0%, #0a1535 100%);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:24px;
+    padding: 36px 32px;
+    max-width:640px; width:90%;
+    position:relative;
+    box-shadow: 0 0 80px rgba(0,80,200,.4);
+    max-height: 90vh; overflow-y:auto;
+  }
+  #modal-close {
+    position:absolute; top:14px; right:18px;
+    font-size:1.4rem; cursor:pointer;
+    color:var(--dim); font-family:'Orbitron',monospace;
+    background:none; border:none;
+  }
+  #modal-close:hover { color:white; }
+  #modal-icon { font-size:3rem; margin-bottom:12px; display:block; }
+  #modal-title {
+    font-family:'Orbitron',monospace;
+    font-size:1.4rem; font-weight:900;
+    margin-bottom:6px;
+  }
+  #modal-sub { color:var(--dim); font-style:italic; font-size:.9rem; margin-bottom:18px; }
+  #modal-desc { line-height:1.75; font-size:.93rem; margin-bottom:20px; }
+
+  .modal-section-title {
+    font-family:'Orbitron',monospace; font-size:.7rem;
+    letter-spacing:.15em; text-transform:uppercase;
+    color: var(--dim); margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,.08); padding-bottom:6px;
+  }
+  .modal-facts { display:flex; flex-direction:column; gap:10px; margin-bottom:22px; }
+  .fact-item {
+    display:flex; gap:12px; align-items:flex-start;
+    padding:10px 14px; border-radius:10px;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07);
+  }
+  .fact-icon { font-size:1.2rem; flex-shrink:0; margin-top:1px; }
+  .fact-text { font-size:.85rem; line-height:1.5; }
+  .fact-text strong { display:block; font-family:'Orbitron',monospace; font-size:.7rem; letter-spacing:.05em; margin-bottom:2px; }
+
+  .scientist-row {
+    display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px;
+  }
+  .scientist-card {
+    flex:1; min-width:140px;
+    padding:12px; border-radius:10px;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07);
+    text-align:center;
+  }
+  .scientist-card .sci-name {
+    font-family:'Orbitron',monospace; font-size:.68rem; font-weight:700;
+    margin-bottom:3px; letter-spacing:.04em;
+  }
+  .scientist-card .sci-contrib { font-size:.72rem; color:var(--dim); }
+
+  .quiz-section { margin-top:10px; }
+  .quiz-q { font-size:.9rem; margin-bottom:14px; line-height:1.5; font-style:italic; }
+  .quiz-options { display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt {
+    padding:10px 16px; border-radius:10px; cursor:pointer;
+    border:1px solid rgba(255,255,255,.15);
+    background:rgba(255,255,255,.04);
+    font-size:.84rem; transition:background .2s, border-color .2s;
+    text-align:left;
+  }
+  .quiz-opt:hover { background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.3); }
+  .quiz-opt.correct { background:rgba(0,255,120,.15); border-color:#00ff88; color:#00ff88; }
+  .quiz-opt.wrong   { background:rgba(255,60,60,.15);  border-color:#ff4444;  color:#ff4444; }
+  #quiz-feedback { margin-top:12px; font-size:.88rem; min-height:20px; font-style:italic; }
+
+  /* ===== INFO BAR ===== */
+  #info-bar {
+    position:relative; z-index:2;
+    max-width:1400px; margin: 10px auto 0;
+    padding: 0 20px;
+    display:flex; gap:10px; flex-wrap:wrap; justify-content:center;
+  }
+  .info-chip {
+    display:flex; align-items:center; gap:6px;
+    padding:6px 14px; border-radius:20px;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+    font-size:.72rem; color:var(--dim);
+    font-family:'Orbitron',monospace; letter-spacing:.05em;
+  }
+  .info-chip span { font-size:.9rem; }
+
+  /* ===== SCROLLABLE BRANCH LIST (mobile fallback) ===== */
+  #branch-list {
+    display:none; position:relative; z-index:2;
+    max-width:1400px; margin: 30px auto 0;
+    padding: 0 20px;
+  }
+
+  @media (max-width:700px) {
+    #vr-viewport { height:340px; }
+    #branch-list { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  }
+  @media (max-width:460px) {
+    #branch-list { grid-template-columns:1fr; }
+    #vr-viewport { height:260px; }
+  }
+
+  /* scroll indicator */
+  .scroll-hint {
+    text-align:center; color:var(--dim); font-size:.72rem;
+    font-family:'Orbitron',monospace; letter-spacing:.1em;
+    margin-top:8px; animation: blink 2s ease-in-out infinite;
+    position:relative; z-index:2;
+  }
+  @keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
+
+  /* progress dots */
+  #progress { text-align:center; margin-top:16px; position:relative; z-index:2; }
+  .dot {
+    display:inline-block; width:8px; height:8px; border-radius:50%;
+    background:rgba(255,255,255,.2); margin:0 4px;
+    cursor:pointer; transition:background .2s, transform .2s;
+  }
+  .dot.active { background:var(--glow-blue); transform:scale(1.4); }
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div id="hero">
+  <p class="hero-label">Grade 10 · CBC Physics · Kenya</p>
+  <h1>Branches of Physics</h1>
+  <p class="subtitle">Explore the universe — from quarks to galaxies</p>
+</div>
+
+<div id="scene">
+  <div id="vr-viewport">
+    <div class="hud-corner tl"></div>
+    <div class="hud-corner tr"></div>
+    <div class="hud-corner bl"></div>
+    <div class="hud-corner br"></div>
+    <div class="hud-label">PHYSICS EXPLORER v2.0 — DRAG TO ROTATE</div>
+
+    <div id="orb-ring">
+      <!-- orbit decorations -->
+      <div class="orbit-ring" style="width:200px;height:200px;animation-duration:18s"></div>
+      <div class="orbit-ring" style="width:320px;height:320px;animation-duration:28s;animation-direction:reverse"></div>
+      <div class="orbit-ring" style="width:440px;height:440px;animation-duration:40s"></div>
+
+      <div class="core-sphere">PHYSICS<br>⚛</div>
+    </div>
+  </div>
+
+  <div id="info-bar">
+    <div class="info-chip"><span>🖱️</span> Drag to rotate</div>
+    <div class="info-chip"><span>👆</span> Click a branch to explore</div>
+    <div class="info-chip"><span>🎓</span> 8 branches · quiz included</div>
+  </div>
+
+  <div id="progress"></div>
+  <p class="scroll-hint" id="scroll-hint" style="display:none">▾ SCROLL TO SEE ALL BRANCHES ▾</p>
+</div>
+
+<div id="branch-list"></div>
+
+<!-- MODAL -->
+<div id="modal">
+  <div id="modal-box">
+    <button id="modal-close">✕</button>
+    <span id="modal-icon"></span>
+    <div id="modal-title"></div>
+    <div id="modal-sub"></div>
+    <div id="modal-desc"></div>
+
+    <div class="modal-section-title">⚡ Key Concepts</div>
+    <div class="modal-facts" id="modal-facts"></div>
+
+    <div class="modal-section-title">🔬 Famous Scientists</div>
+    <div class="scientist-row" id="modal-scientists"></div>
+
+    <div class="quiz-section">
+      <div class="modal-section-title">🧪 Quick Quiz</div>
+      <div class="quiz-q" id="quiz-q"></div>
+      <div class="quiz-options" id="quiz-opts"></div>
+      <div id="quiz-feedback"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== STARFIELD ===== */
+const starsEl = document.getElementById('stars');
+for(let i=0;i<200;i++){
+  const s=document.createElement('div'); s.className='star';
+  const sz=Math.random()*2.5+.5;
+  s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${Math.random()*5}s;`;
+  starsEl.appendChild(s);
+}
+
+/* ===== BRANCH DATA ===== */
+const branches = [
+  {
+    name:"Mechanics",
+    icon:"⚙️",
+    color:"#00d4ff",
+    tagline:"Motion, forces & energy",
+    examples:["Newton's Laws","Projectile","Friction","Work & Energy"],
+    desc:"Mechanics is the oldest branch of Physics, studying how objects move and the forces that cause motion. It underlies everything from a thrown ball to rocket launches. CBC Grade 10 covers kinematics, Newton's three laws, and energy transformations.",
+    facts:[
+      {icon:"🏃",title:"Kinematics",text:"Describes motion using displacement, velocity, and acceleration — without worrying about what causes it."},
+      {icon:"💪",title:"Newton's Laws",text:"Three laws that explain every push and pull: inertia, F=ma, and action-reaction pairs."},
+      {icon:"🔋",title:"Energy & Work",text:"Work = Force × displacement. Energy is conserved but can transform between kinetic and potential forms."},
+    ],
+    scientists:[{name:"Isaac Newton",contrib:"Laws of Motion & Gravity (1687)"},{name:"Galileo Galilei",contrib:"Experimental Motion Studies"}],
+    quiz:{q:"A 2 kg ball is accelerated at 5 m/s². What is the net force?",opts:["5 N","10 N","2.5 N","25 N"],ans:1},
+  },
+  {
+    name:"Thermodynamics",
+    icon:"🔥",
+    color:"#ff8c00",
+    tagline:"Heat, temperature & energy transfer",
+    examples:["Heat Transfer","Laws of Thermo","Entropy","Gas Laws"],
+    desc:"Thermodynamics explores how heat energy moves and transforms. It explains why your tea cools down, how engines work, and why you can't build a perfect machine. The laws of thermodynamics are among the most fundamental in all of science.",
+    facts:[
+      {icon:"🌡️",title:"Temperature & Heat",text:"Temperature measures average kinetic energy of particles. Heat is energy transferred due to temperature difference."},
+      {icon:"🔄",title:"1st Law (Conservation)",text:"Energy cannot be created or destroyed, only transferred or transformed. ΔU = Q − W"},
+      {icon:"♾️",title:"2nd Law (Entropy)",text:"Heat flows naturally from hot to cold. Disorder (entropy) in a closed system always increases."},
+    ],
+    scientists:[{name:"James Joule",contrib:"Mechanical Equivalent of Heat"},{name:"Lord Kelvin",contrib:"Absolute Temperature Scale"}],
+    quiz:{q:"If heat flows from a cup of tea to the surrounding air, this is an example of:",opts:["Entropy decreasing","The 1st Law being violated","The 2nd Law of Thermodynamics","Nuclear fusion"],ans:2},
+  },
+  {
+    name:"Optics",
+    icon:"🔭",
+    color:"#00ffd0",
+    tagline:"Light, lenses & vision",
+    examples:["Reflection","Refraction","Lenses","Dispersion"],
+    desc:"Optics is the study of light and how it interacts with matter. It explains rainbows, how glasses correct vision, fibre optic cables, and the cameras in your phone. Geometric optics uses ray diagrams; wave optics explains interference and diffraction.",
+    facts:[
+      {icon:"↗️",title:"Reflection",text:"Angle of incidence = Angle of reflection. Mirrors obey this law, forming images that are virtual or real."},
+      {icon:"🌊",title:"Refraction",text:"Light bends when it moves between media of different densities. Snell's Law: n₁sinθ₁ = n₂sinθ₂"},
+      {icon:"🌈",title:"Dispersion",text:"White light splits into a spectrum when passing through a prism because different wavelengths refract by different amounts."},
+    ],
+    scientists:[{name:"Isaac Newton",contrib:"Decomposed white light (1666)"},{name:"Christiaan Huygens",contrib:"Wave Theory of Light"}],
+    quiz:{q:"A ray of light moves from water into air. Which way does it bend?",opts:["Toward the normal","Away from the normal","It doesn't bend","Parallel to the surface"],ans:1},
+  },
+  {
+    name:"Electricity & Magnetism",
+    icon:"⚡",
+    color:"#ffe033",
+    tagline:"Charges, currents & fields",
+    examples:["Ohm's Law","Circuits","Magnetic Fields","Electromagnetic Induction"],
+    desc:"Electromagnetism unifies electric and magnetic phenomena. Electric current powers every device you use. Magnetic fields from current loops drive motors. Michael Faraday discovered that changing magnetic fields create electric current — the principle behind every generator on Earth.",
+    facts:[
+      {icon:"⚡",title:"Ohm's Law",text:"V = IR. Voltage drives current through resistance. This simple relationship underpins all circuit analysis."},
+      {icon:"🧲",title:"Magnetic Effect",text:"A current-carrying conductor in a magnetic field experiences a force — the motor effect (F = BIL)."},
+      {icon:"🔁",title:"Faraday's Induction",text:"A changing magnetic flux induces an EMF in a conductor. This is the working principle of generators and transformers."},
+    ],
+    scientists:[{name:"Michael Faraday",contrib:"Electromagnetic Induction (1831)"},{name:"James Clerk Maxwell",contrib:"Unified EM Theory (1865)"}],
+    quiz:{q:"The resistance of a wire is 5 Ω and the current through it is 2 A. What is the voltage?",opts:["2.5 V","7 V","10 V","0.4 V"],ans:2},
+  },
+  {
+    name:"Waves & Sound",
+    icon:"🌊",
+    color:"#b060ff",
+    tagline:"Oscillations, vibrations & acoustics",
+    examples:["Frequency","Wavelength","Resonance","Doppler Effect"],
+    desc:"Wave physics explains how energy travels through media without net movement of matter. Sound is a mechanical longitudinal wave requiring a medium. Electromagnetic waves (light, radio, X-rays) can travel through vacuum. Resonance amplifies vibrations — it can sing a bridge or shatter a glass!",
+    facts:[
+      {icon:"📡",title:"Wave Equation",text:"v = fλ. Wave speed equals frequency multiplied by wavelength. For sound in air at 20°C, v ≈ 343 m/s."},
+      {icon:"🚨",title:"Doppler Effect",text:"The observed frequency changes when source or observer moves. Ambulance sirens sound higher as they approach and lower as they recede."},
+      {icon:"🎶",title:"Resonance",text:"When a system is driven at its natural frequency, amplitude builds dramatically — used in musical instruments and radio tuning."},
+    ],
+    scientists:[{name:"Christian Doppler",contrib:"Doppler Effect (1842)"},{name:"Heinrich Hertz",contrib:"Proved existence of EM waves"}],
+    quiz:{q:"A wave has frequency 500 Hz and wavelength 0.68 m. What is its speed?",opts:["735 m/s","500 m/s","340 m/s","0.68 m/s"],ans:2},
+  },
+  {
+    name:"Nuclear Physics",
+    icon:"☢️",
+    color:"#ff2d78",
+    tagline:"Atoms, radioactivity & nuclear energy",
+    examples:["Alpha/Beta/Gamma","Half-Life","Fission","Fusion"],
+    desc:"Nuclear Physics probes the nucleus of the atom. Radioactive decay, nuclear fission powering reactors, and fusion powering the sun all belong here. Medical imaging (PET scans, X-rays) and cancer radiotherapy rely directly on nuclear physics principles taught at this level.",
+    facts:[
+      {icon:"⚛️",title:"Radioactive Decay",text:"Unstable nuclei emit alpha (α), beta (β), or gamma (γ) radiation to reach a stable state. Each has different penetrating power."},
+      {icon:"⏱️",title:"Half-Life",text:"The time for half of a radioactive sample to decay. Carbon-14 (half-life 5,730 yrs) is used for archaeological dating."},
+      {icon:"💥",title:"Fission vs Fusion",text:"Fission splits heavy nuclei (uranium) releasing energy — used in reactors. Fusion joins light nuclei (hydrogen) — powers the sun."},
+    ],
+    scientists:[{name:"Marie Curie",contrib:"Discovered Polonium & Radium"},{name:"Ernest Rutherford",contrib:"Nuclear Model of the Atom"}],
+    quiz:{q:"Which radiation type has the GREATEST penetrating power?",opts:["Alpha (α)","Beta (β)","Gamma (γ)","Neutron radiation"],ans:2},
+  },
+  {
+    name:"Modern Physics",
+    icon:"🔮",
+    color:"#00ff88",
+    tagline:"Relativity, quantum & beyond",
+    examples:["Special Relativity","Photoelectric Effect","Wave-Particle Duality","E=mc²"],
+    desc:"Modern Physics revolutionised our view of reality in the 20th century. Einstein's relativity showed that time and space are flexible. Quantum mechanics revealed that particles behave like waves, and measurement affects outcomes. These ideas underpin lasers, LEDs, MRI machines, and the transistors in every computer.",
+    facts:[
+      {icon:"💡",title:"Photoelectric Effect",text:"Light shining on a metal ejects electrons — but only if frequency exceeds a threshold. This proved light comes in quanta (photons)."},
+      {icon:"⏰",title:"Special Relativity",text:"Einstein (1905): the speed of light is constant for all observers. As speed increases, time dilates and mass increases. E = mc²."},
+      {icon:"🌀",title:"Wave-Particle Duality",text:"Matter (electrons, etc.) behaves as waves in experiments like the double-slit. de Broglie: λ = h/mv."},
+    ],
+    scientists:[{name:"Albert Einstein",contrib:"Relativity & Photoelectric Effect"},{name:"Max Planck",contrib:"Quantum Theory (1900)"}],
+    quiz:{q:"E = mc² means mass can be converted into:",opts:["Motion only","Heat only","Energy","Sound"],ans:2},
+  },
+  {
+    name:"Astrophysics",
+    icon:"🌌",
+    color:"#60c0ff",
+    tagline:"Stars, galaxies & the cosmos",
+    examples:["Gravity","Big Bang","Black Holes","Stellar Evolution"],
+    desc:"Astrophysics applies all branches of physics to understand celestial objects and the universe itself. It explains how stars form and die, why black holes trap even light, how the Big Bang created space and time, and whether other planets might host life. Many CBC topics — gravity, waves, nuclear fusion — connect directly here.",
+    facts:[
+      {icon:"🌟",title:"Stellar Lifecycle",text:"Stars are born from nebulae, live by nuclear fusion (H→He), and die as white dwarfs, neutron stars, or black holes depending on mass."},
+      {icon:"🕳️",title:"Black Holes",text:"Regions where gravity is so strong that escape velocity exceeds the speed of light. The event horizon is the point of no return."},
+      {icon:"💫",title:"Big Bang",text:"The universe began ~13.8 billion years ago from an extremely hot, dense state and has been expanding ever since (Hubble's Law)."},
+    ],
+    scientists:[{name:"Edwin Hubble",contrib:"Proved galaxies exist & universe expands"},{name:"Stephen Hawking",contrib:"Black hole radiation theory"}],
+    quiz:{q:"The process that powers the sun is:",opts:["Nuclear fission","Chemical combustion","Nuclear fusion","Radioactive decay"],ans:2},
+  },
+];
+
+/* ===== LAYOUT (radial positioning) ===== */
+const vp = document.getElementById('vr-viewport');
+const ring = document.getElementById('orb-ring');
+const progressEl = document.getElementById('progress');
+
+let rotY = 0, rotX = 8, dragging=false, lastX=0, lastY=0;
+let activeBranch = null;
+
+function positionBranches(){
+  const vpW = vp.offsetWidth, vpH = vp.offsetHeight;
+  const isMobile = vpW < 700;
+  const r = isMobile ? Math.min(vpW*.36, 160) : Math.min(vpW*.34, 230);
+
+  branches.forEach((b,i)=>{
+    const angle = (i/branches.length)*Math.PI*2 - Math.PI/2;
+    const cx = vpW/2 + Math.cos(angle)*r;
+    const cy = vpH/2 + Math.sin(angle)*r*0.52;
+
+    let card = document.getElementById('card-'+i);
+    let line = document.getElementById('line-'+i);
+
+    if(!card){
+      // create line
+      line = document.createElement('div');
+      line.className='branch-line'; line.id='line-'+i;
+      line.style.background = `linear-gradient(to right, ${b.color}88, ${b.color}22)`;
+      vp.appendChild(line);
+
+      // create card
+      card = document.createElement('div');
+      card.className='branch'; card.id='card-'+i;
+      card.innerHTML=`
+        <div class="branch-card" style="--b-color:${b.color}; box-shadow:0 0 20px ${b.color}33;">
+          <span class="branch-icon">${b.icon}</span>
+          <div class="branch-name" style="color:${b.color}">${b.name}</div>
+          <div class="branch-tagline">${b.tagline}</div>
+          <div class="branch-examples">${b.examples.map(e=>`<span class="ex-tag" style="color:${b.color}99;border-color:${b.color}44">${e}</span>`).join('')}</div>
+          <button class="branch-btn" style="color:${b.color};border-color:${b.color}66">EXPLORE →</button>
+        </div>`;
+      card.addEventListener('click',()=>openModal(i));
+      ring.appendChild(card);
+
+      // progress dot
+      const dot=document.createElement('div');
+      dot.className='dot'; dot.id='dot-'+i;
+      dot.style.setProperty('--c',b.color);
+      dot.addEventListener('click',()=>openModal(i));
+      progressEl.appendChild(dot);
+    }
+
+    const cardW = isMobile ? 160 : 240;
+    const cardH = 180;
+    card.style.left=(cx - cardW/2)+'px';
+    card.style.top =(cy - cardH/2)+'px';
+    card.style.width=cardW+'px';
+
+    // connector line from center to card
+    const vpCx=vpW/2, vpCy=vpH/2;
+    const dx=cx-vpCx, dy=cy-vpCy;
+    const len=Math.sqrt(dx*dx+dy*dy);
+    const a=Math.atan2(dy,dx)*180/Math.PI;
+    line.style.left=vpCx+'px';
+    line.style.top=vpCy+'px';
+    line.style.width=len+'px';
+    line.style.transform=`translateY(-50%) rotate(${a}deg)`;
+    line.style.background=`linear-gradient(to right, ${b.color}77, ${b.color}11)`;
+  });
+}
+
+window.addEventListener('resize', positionBranches);
+positionBranches();
+
+/* ===== DRAG ROTATE ===== */
+vp.addEventListener('mousedown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;});
+window.addEventListener('mouseup',()=>dragging=false);
+window.addEventListener('mousemove',e=>{
+  if(!dragging)return;
+  const dx=e.clientX-lastX, dy=e.clientY-lastY;
+  rotY+=dx*.3; rotX-=dy*.2;
+  rotX=Math.max(-20,Math.min(20,rotX));
+  ring.style.transform=`rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+  lastX=e.clientX; lastY=e.clientY;
+});
+
+vp.addEventListener('touchstart',e=>{dragging=true;lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;},{passive:true});
+window.addEventListener('touchend',()=>dragging=false);
+window.addEventListener('touchmove',e=>{
+  if(!dragging)return;
+  const dx=e.touches[0].clientX-lastX, dy=e.touches[0].clientY-lastY;
+  rotY+=dx*.3; rotX-=dy*.2;
+  rotX=Math.max(-20,Math.min(20,rotX));
+  ring.style.transform=`rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+  lastX=e.touches[0].clientX; lastY=e.touches[0].clientY;
+},{passive:true});
+
+/* ===== AUTO ROTATE ===== */
+let autoAnim;
+function startAuto(){
+  autoAnim=setInterval(()=>{
+    rotY+=.15;
+    ring.style.transform=`rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+  },20);
+}
+function stopAuto(){clearInterval(autoAnim);}
+startAuto();
+vp.addEventListener('mousedown',stopAuto);
+vp.addEventListener('touchstart',stopAuto,{passive:true});
+window.addEventListener('mouseup',startAuto);
+window.addEventListener('touchend',startAuto);
+
+/* ===== MOBILE LIST ===== */
+const listEl=document.getElementById('branch-list');
+if(window.innerWidth<=700){
+  document.getElementById('scroll-hint').style.display='block';
+  branches.forEach((b,i)=>{
+    const c=document.createElement('div');
+    c.style.cssText=`background:rgba(8,20,60,.8);border:1px solid ${b.color}44;border-radius:14px;padding:14px 12px;cursor:pointer;`;
+    c.innerHTML=`<div style="font-size:1.8rem">${b.icon}</div>
+      <div style="font-family:'Orbitron',monospace;font-size:.7rem;color:${b.color};margin:6px 0 2px;letter-spacing:.05em">${b.name}</div>
+      <div style="font-size:.7rem;color:rgba(180,210,255,.5)">${b.tagline}</div>`;
+    c.addEventListener('click',()=>openModal(i));
+    listEl.appendChild(c);
+  });
+}
+
+/* ===== MODAL ===== */
+function openModal(i){
+  const b=branches[i];
+  document.getElementById('modal-icon').textContent=b.icon;
+  document.getElementById('modal-title').textContent=b.name;
+  document.getElementById('modal-title').style.color=b.color;
+  document.getElementById('modal-sub').textContent=b.tagline;
+  document.getElementById('modal-desc').textContent=b.desc;
+
+  const factsEl=document.getElementById('modal-facts');
+  factsEl.innerHTML=b.facts.map(f=>`
+    <div class="fact-item" style="border-color:${b.color}33">
+      <div class="fact-icon">${f.icon}</div>
+      <div class="fact-text"><strong style="color:${b.color}">${f.title}</strong>${f.text}</div>
+    </div>`).join('');
+
+  const sciEl=document.getElementById('modal-scientists');
+  sciEl.innerHTML=b.scientists.map(s=>`
+    <div class="scientist-card" style="border-color:${b.color}33">
+      <div class="sci-name" style="color:${b.color}">${s.name}</div>
+      <div class="sci-contrib">${s.contrib}</div>
+    </div>`).join('');
+
+  // Quiz
+  document.getElementById('quiz-q').textContent=b.quiz.q;
+  document.getElementById('quiz-feedback').textContent='';
+  const optsEl=document.getElementById('quiz-opts');
+  optsEl.innerHTML='';
+  b.quiz.opts.forEach((o,idx)=>{
+    const btn=document.createElement('button');
+    btn.className='quiz-opt'; btn.textContent=o;
+    btn.addEventListener('click',()=>{
+      if(optsEl.querySelector('.correct,.wrong'))return; // already answered
+      if(idx===b.quiz.ans){
+        btn.classList.add('correct');
+        document.getElementById('quiz-feedback').textContent='✅ Correct! Well done!';
+        document.getElementById('quiz-feedback').style.color='#00ff88';
+      } else {
+        btn.classList.add('wrong');
+        optsEl.querySelectorAll('.quiz-opt')[b.quiz.ans].classList.add('correct');
+        document.getElementById('quiz-feedback').textContent='❌ Not quite — the highlighted answer is correct.';
+        document.getElementById('quiz-feedback').style.color='#ff6060';
+      }
+      // mark dot
+      document.querySelectorAll('.dot').forEach((d,di)=>{
+        d.classList.toggle('active',di===i);
+      });
+    });
+    optsEl.appendChild(btn);
+  });
+
+  document.getElementById('modal').classList.add('open');
+  activeBranch=i;
+}
+
+document.getElementById('modal-close').addEventListener('click',()=>{
+  document.getElementById('modal').classList.remove('open');
+});
+document.getElementById('modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('modal'))
+    document.getElementById('modal').classList.remove('open');
+});
+</script>
+</body>
+</html>
